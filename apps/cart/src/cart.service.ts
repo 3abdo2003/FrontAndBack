@@ -98,5 +98,28 @@ export class CartService {
     return order;
 }
 
+async deleteCartItem(userEmail: string, productId: string): Promise<Cart> {
+  const cart = await this.cartModel.findOne({ userEmail });
+
+  if (!cart) {
+    throw new NotFoundException('Cart not found for the user.');
+  }
+
+  // Find the index of the item to be deleted
+  const index = cart.items.findIndex(item => item.productId.toString() === productId);
+
+  if (index === -1) {
+    throw new NotFoundException('Product not found in the cart.');
+  }
+
+  // Remove the item from the items array
+  cart.items.splice(index, 1);
+
+  // Save the updated cart
+  return await cart.save();
+}
+
+
+
 
 }

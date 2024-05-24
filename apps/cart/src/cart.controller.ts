@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Get, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Req, Delete, Param } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartDTO } from '../dto/create-cart.dto';
 import { Cart } from '../interface/cart.interface';
@@ -23,7 +23,14 @@ export class CartController {
     const userEmail = request.decodedData.email;
     return this.cartService.getCartByUserEmail(userEmail);
   }
-  
+
+  @UseGuards(AuthenticationGuard)
+  @Delete('delete-item/:productId')
+async deleteCartItem(@Req() request, @Param('productId') productId: string): Promise<Cart> {
+  const userEmail = request.decodedData.email;
+  return this.cartService.deleteCartItem(userEmail, productId);
+}
+
 
   @UseGuards(AuthenticationGuard)
   @Get('orders')

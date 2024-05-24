@@ -132,3 +132,18 @@ export const getOrders = async (token: string) => {
     const response = await Cartapi.get('/cart/orders', { headers });
     return response.data; // Assuming this directly returns an array of orders
   };
+
+  export const deleteCartItem = async (productId: string, token: string) => {
+    if (!token) {
+      throw new Error('Token not found');
+    }
+  
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+  
+    const response = await Cartapi.delete(`/cart/delete-item/${productId}`, { headers }); // Corrected URL with productId
+    return response.data;
+  };
+  

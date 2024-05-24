@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { useEffect, useState } from 'react';
-import { getCartItems, placeOrder, getProductById } from '../services/api'; // Assuming getProduct is exported from '../services/api'
+import { getCartItems, placeOrder, getProductById,deleteCartItem  } from '../services/api'; // Assuming getProduct is exported from '../services/api'
 import styles from '../styles/Cart.module.css';
 
 const Cart: React.FC = () => {
@@ -75,6 +75,24 @@ const Cart: React.FC = () => {
     return <p>Loading...</p>;
   }
 
+  const handleDeleteItem = async (productId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token not found');
+      }
+
+      await deleteCartItem(productId, token); // Call deleteCartItem with the productId
+      // Refetch cart items after deletion
+      const updatedCartItems = cartItems.filter(item => item.productId !== productId);
+      setCartItems(updatedCartItems);
+      alert('Item deleted from the cart successfully!');
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item from the cart.');
+    }
+  };
+
   return (
     <main className={styles.container}>
       <h1>Cart</h1>
@@ -107,6 +125,9 @@ const Cart: React.FC = () => {
                         ))}
                       </p>
                     )}
+                    <button onClick={() => handleDeleteItem(item.productId)} className={styles.deleteButton}>
+                      Delete
+                    </button>
                   </div>
                 </div>
               )}
@@ -119,6 +140,7 @@ const Cart: React.FC = () => {
       )}
     </main>
   );
+  
 };
 
 export default Cart;
